@@ -13,11 +13,18 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('license_id')->constrained('licenses')->cascadeOnDelete();
+
+            $table->foreignId('purchase_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->decimal('amount', 10, 2);
-            $table->enum('status', ['pending', 'completed', 'refunded']);
+
+            $table->enum('status', ['pending', 'completed', 'failed']);
+
             $table->string('payment_method')->nullable();
             $table->timestamp('paid_at')->nullable();
+
             $table->timestamps();
         });
     }

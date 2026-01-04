@@ -15,10 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->enum('type', ['flutter', 'wp_plugin', 'wp_theme']);
-            $table->string('version')->nullable();
-            $table->string('update_url')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->enum('type', ['plugin', 'theme', 'flutter_app']);
+            $table->boolean('supports_trial')->default(false);
+            $table->unsignedInteger('trial_days')->nullable();
             $table->timestamps();
         });
     }

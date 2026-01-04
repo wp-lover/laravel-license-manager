@@ -11,22 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bulk_purchases', function (Blueprint $table) {
+        Schema::create('reseller_quotas', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('reseller_id')
                 ->constrained('users')
                 ->cascadeOnDelete();
 
-            $table->foreignId('product_id')
-                ->constrained()
-                ->cascadeOnDelete();
-
-            $table->unsignedInteger('total_licenses');
-            $table->unsignedInteger('remaining_licenses');
-
-            // 0 = free reseller quota
-            $table->decimal('price_paid', 10, 2)->default(0);
+            $table->unsignedInteger('free_license_limit')->default(5);
+            $table->unsignedInteger('used_free_licenses')->default(0);
 
             $table->timestamps();
         });
@@ -37,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bulk_purchases');
+        Schema::dropIfExists('reseller_quotas');
     }
 };
