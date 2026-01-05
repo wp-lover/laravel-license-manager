@@ -11,23 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // 3. purchases
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('buyer_id')
-                ->constrained('users')
-                ->cascadeOnDelete();
-
-            $table->foreignId('product_id')
-                ->constrained()
-                ->cascadeOnDelete();
-
+            $table->foreignId('buyer_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->unsignedInteger('quantity');
-
-            $table->enum('purchase_type', ['paid', 'free_quota']);
-            $table->enum('status', ['pending', 'completed'])->default('pending');
-
+            $table->decimal('total_amount', 10, 2)->default(0);
+            $table->string('currency')->default('USD');
+            $table->enum('status', ['pending', 'completed', 'refunded', 'canceled'])->default('pending');
+            $table->timestamp('purchased_at')->nullable();
             $table->timestamps();
+
+            $table->index('buyer_id');
         });
     }
 
@@ -36,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bulk_purchases');
+        Schema::dropIfExists('purchases');
     }
 };

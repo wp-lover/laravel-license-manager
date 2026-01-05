@@ -22,6 +22,7 @@ return new class extends Migration
             $table->enum('type', ['domain', 'app']);
 
             $table->ipAddress('ip_address')->nullable();
+            $table->string('user_agent')->nullable();
             $table->timestamp('activated_at')->useCurrent();
             $table->timestamp('last_checked_at')->nullable();
             $table->timestamp('revoked_at')->nullable();
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['license_id', 'identifier']);
+            $table->index('license_id');
         });
     }
 

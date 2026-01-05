@@ -34,4 +34,11 @@ class ResellerQuotaPolicy
     {
         return $user->is_admin;
     }
+
+    public function before(User $user, $ability)
+    {
+        if ($user->isAdmin()) {
+            return true;
+        }
+    }
 }

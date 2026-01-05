@@ -11,14 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // 2. products (your version + improvements)
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->enum('type', ['plugin', 'theme', 'flutter_app']);
+            $table->enum('type', ['wp_plugin', 'wp_theme', 'flutter_app']);
+            $table->text('description')->nullable();
+            $table->string('current_version')->default('1.0.0');
+            $table->string('update_url')->nullable();
+            $table->unsignedBigInteger('price')->default(0);
             $table->boolean('supports_trial')->default(false);
-            $table->unsignedInteger('trial_days')->nullable();
+            $table->unsignedSmallInteger('trial_days')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->json('metadata')->nullable();
             $table->timestamps();
+
+            $table->index(['type', 'is_active']);
         });
     }
 

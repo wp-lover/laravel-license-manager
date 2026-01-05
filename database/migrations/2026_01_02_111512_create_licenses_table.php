@@ -32,7 +32,7 @@ return new class extends Migration
                 ->constrained('users')
                 ->nullOnDelete();
 
-            $table->string('license_key')->unique();
+            $table->string('license_key')->unique()->index();
 
             $table->string('domain')->nullable();
 
@@ -45,6 +45,8 @@ return new class extends Migration
             $table->timestamp('expires_at')->nullable();
 
             $table->timestamps();
+
+            $table->index(['product_id', 'owner_id', 'sold_by_user_id']);
         });
     }
 
