@@ -15,6 +15,7 @@ class License extends Model
         'license_key',
         'domain',
         'status',
+        'max_domains',
         'type',
         'activated_at',
         'expires_at',
