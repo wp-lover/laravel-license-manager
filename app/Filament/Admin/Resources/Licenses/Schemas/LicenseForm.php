@@ -38,11 +38,14 @@ class LicenseForm
                 ->required()
                 ->helperText('e.g. 1 = single domain, 3 = multi-site'),
 
-            Select::make('owner_id')
-                ->label('Customer (Owner)')
-                ->options(User::pluck('name', 'id')->toArray())
-                ->searchable()
-                ->nullable(),
+            TextInput::make('customer_email')
+                ->label('Customer Email')
+                ->email()
+                ->required()
+                ->autocomplete(false)
+                ->placeholder('customer@example.com')
+               
+                ->helperText('Enter customer email. If new, a user will be created automatically.'),
 
             Select::make('sold_by_user_id')
                 ->label('Sold/Issued By')

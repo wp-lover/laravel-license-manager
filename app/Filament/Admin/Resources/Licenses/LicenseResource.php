@@ -8,8 +8,6 @@ use App\Filament\Admin\Resources\Licenses\Pages\ViewLicense;
 use App\Filament\Admin\Resources\Licenses\Pages\EditLicense;
 use App\Filament\Admin\Resources\Licenses\Schemas\LicenseForm;
 use App\Models\License;
-use App\Models\Product;
-use App\Models\Purchase;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
@@ -20,8 +18,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 
 use BackedEnum;
-use Filament\Notifications\Notification;
-use Illuminate\Support\Str;
 use UnitEnum;
 
 class LicenseResource extends Resource
@@ -49,6 +45,7 @@ class LicenseResource extends Resource
 
                 Tables\Columns\TextColumn::make('owner.name')
                     ->label('Owner')
+
                     ->placeholder('Unassigned'),
 
                 Tables\Columns\TextColumn::make('status')->badge(),
@@ -71,62 +68,7 @@ class LicenseResource extends Resource
             ]);
     }
 
-    protected function handleRecordCreation(array $data): \Illuminate\Database\Eloquent\Model
-    {
-        $product = Product::find($data['product_id']);
-        $quantity = max(1, $data['quantity'] ?? 1);
-
-        // Determine status/type based on checkboxes
-        $type = $data['type'] ?? 'paid';
-        if ($data['is_free'] ?? false) {
-            $data['total_amount'] = 0;
-            $type = 'trial'; // or 'free' if you add that option
-        }
-        if ($data['later_pay'] ?? false) {
-            $type = 'unpaid';
-        }
-
-        // Step 1: Create the Purchase record (always)
-        $purchase = Purchase::create([
-            'buyer_id'      => $data['owner_id'] ?? auth()->user()->id,
-            'product_id'    => $data['product_id'],
-            'quantity'      => $quantity,
-            'total_amount'  => $data['total_amount'] ?? ($product->price * $quantity),
-            'currency'      => 'BDT',
-            'status'        => ($data['later_pay'] ?? false) ? 'pending' : 'completed',
-            'purchased_at'  => now(),
-        ]);
-
-        $firstLicense = null;
-
-        for ($i = 0; $i < $quantity; $i++) {
-            $key = strtoupper($product->slug . '-' . Str::random(4) . '-' . Str::random(4));
-
-            $license = License::create([
-                'purchase_id'       => $purchase->id,          // ← Now always set
-                'product_id'        => $data['product_id'],
-                'owner_id'          => $data['owner_id'] ?? null,
-                'sold_by_user_id'   => auth()->user()->id,
-                'license_key'       => $key,
-                'status'            => in_array($type, ['paid', 'trial']) ? 'active' : 'inactive',
-                'type'              => $type,
-                'activated_at'      => $data['activated_at'] ?? null,
-                'expires_at'        => $data['expires_at'] ?? null,
-            ]);
-
-            if (!$firstLicense) {
-                $firstLicense = $license;
-            }
-        }
-
-        Notification::make()
-            ->title("{$quantity} license(s) created successfully!")
-            ->success()
-            ->send();
-
-        return $firstLicense;
-    }
-
+  
     public static function getPages(): array
     {
         return [
