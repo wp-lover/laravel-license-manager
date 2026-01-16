@@ -40,6 +40,7 @@ class CustomerPanelProvider extends PanelProvider
                 FilamentInfoWidget::class,
             ])
             ->middleware([
+                
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,

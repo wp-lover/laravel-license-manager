@@ -58,7 +58,9 @@ class CreateLicense extends CreateRecord
 
             $firstLicense = null;
 
+
             for ($i = 0; $i < $quantity; $i++) {
+
                 $key = strtoupper(Str::random(10) . '-' . random_int(1000, 9999) . '-' . Str::random(10));
 
                 $license = License::create([
@@ -77,6 +79,8 @@ class CreateLicense extends CreateRecord
                     $firstLicense = $license;
                 }
             }
+
+
 
             Notification::make()
                 ->title("{$quantity} license(s) created successfully!")

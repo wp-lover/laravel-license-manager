@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -19,27 +20,30 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class AdminPanelProvider extends PanelProvider
+class ResellerPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->id('admin')
-            ->path('admin')
+            ->id('reseller')
+            ->path('reseller')
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\Filament\Admin\Resources')
-            ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\Filament\Admin\Pages')
+            ->discoverResources(in: app_path('Filament/Reseller/Resources'), for: 'App\Filament\Reseller\Resources')
+            ->discoverPages(in: app_path('Filament/Reseller/Pages'), for: 'App\Filament\Reseller\Pages')
+            
             ->pages([
                 Dashboard::class,
+                \App\Filament\Reseller\Pages\ResellerDashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
+            ->discoverWidgets(in: app_path('Filament/Reseller/Widgets'), for: 'App\Filament\Reseller\Widgets')
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,
             ])
             ->middleware([
+                
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
